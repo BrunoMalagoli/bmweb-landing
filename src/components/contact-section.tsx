@@ -65,8 +65,17 @@ export function ContactSection() {
   };
 
   return (
-    <section id="contact" className="py-24 bg-muted/30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section 
+      id="contact" 
+      className="py-24 section-bg-muted relative overflow-hidden"
+    >
+      {/* Optimized background decorations */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/4 left-1/5 w-52 h-52 bg-accent/8 rounded-full blur-3xl animate-gradient-pulse" />
+        <div className="absolute bottom-1/3 right-1/6 w-38 h-38 bg-primary/6 rounded-full blur-2xl animate-gentle-drift" style={{ animationDelay: "2.5s" }} />
+      </div>
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             {content.title}

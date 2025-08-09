@@ -1,7 +1,267 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+
+/* Performance optimizations */
+* {
+  /* Reduce paint/layout operations */
+  box-sizing: border-box;
+}
+
+/* GPU acceleration for frequently animated elements */
+.will-change-transform,
+[class*="animate-"],
+[class*="transition-"],
+.testimonial-card,
+#lights {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* Optimize text rendering */
+body {
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+html {
+  overflow-x: hidden;
+}
+
+/* Contain layout for better performance */
+.contain-layout {
+  contain: layout;
+}
+
+/* Seamless section backgrounds with smooth transitions */
+.section-bg-primary {
+  background: 
+    radial-gradient(ellipse at top, hsl(var(--primary) / 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom, hsl(var(--primary) / 0.05) 0%, transparent 50%),
+    linear-gradient(180deg, 
+      hsl(var(--background)) 0%, 
+      hsl(var(--primary) / 0.04) 15%, 
+      hsl(var(--primary) / 0.08) 50%, 
+      hsl(var(--primary) / 0.04) 85%, 
+      hsl(var(--background)) 100%);
+}
+
+.section-bg-secondary {
+  background: 
+    radial-gradient(ellipse at top, hsl(var(--secondary) / 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom, hsl(var(--secondary) / 0.05) 0%, transparent 50%),
+    linear-gradient(180deg, 
+      hsl(var(--background)) 0%, 
+      hsl(var(--secondary) / 0.04) 15%, 
+      hsl(var(--secondary) / 0.08) 50%, 
+      hsl(var(--secondary) / 0.04) 85%, 
+      hsl(var(--background)) 100%);
+}
+
+.section-bg-muted {
+  background: 
+    radial-gradient(ellipse at top, hsl(var(--muted) / 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom, hsl(var(--muted) / 0.10) 0%, transparent 50%),
+    linear-gradient(180deg, 
+      hsl(var(--background)) 0%, 
+      hsl(var(--muted) / 0.08) 15%, 
+      hsl(var(--muted) / 0.15) 50%, 
+      hsl(var(--muted) / 0.08) 85%, 
+      hsl(var(--background)) 100%);
+}
+
+.section-bg-accent {
+  background: 
+    radial-gradient(ellipse at top, hsl(var(--accent) / 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at bottom, hsl(var(--accent) / 0.08) 0%, transparent 50%),
+    linear-gradient(180deg, 
+      hsl(var(--background)) 0%, 
+      hsl(var(--accent) / 0.05) 15%, 
+      hsl(var(--accent) / 0.10) 50%, 
+      hsl(var(--accent) / 0.05) 85%, 
+      hsl(var(--background)) 100%);
+}
+
+/* Neutral background for hero with subtle gradient */
+.section-bg-neutral {
+  background: 
+    radial-gradient(ellipse at center, hsl(var(--primary) / 0.03) 0%, transparent 60%),
+    linear-gradient(180deg, 
+      hsl(var(--background)) 0%, 
+      hsl(var(--muted) / 0.02) 30%, 
+      hsl(var(--primary) / 0.01) 50%, 
+      hsl(var(--muted) / 0.02) 70%, 
+      hsl(var(--background)) 100%);
+}
+
+/* Light mode enhanced contrast - Improved harmony with original colors */
+:root {
+  --section-primary-light: oklch(0.97 0.015 203);
+  --section-secondary-light: oklch(0.96 0.012 197);
+  --section-muted-light: oklch(0.94 0.018 197);
+  --section-accent-light: oklch(0.95 0.020 202);
+}
+
+.light .section-bg-primary {
+  background: 
+    linear-gradient(180deg, 
+      oklch(0.975 0.008 203) 0%, 
+      oklch(0.965 0.012 203) 20%, 
+      oklch(0.955 0.015 203) 50%, 
+      oklch(0.965 0.012 203) 80%, 
+      oklch(0.975 0.008 203) 100%);
+}
+
+.light .section-bg-secondary {
+  background: 
+    linear-gradient(180deg, 
+      oklch(0.970 0.006 197) 0%, 
+      oklch(0.960 0.009 197) 20%, 
+      oklch(0.945 0.014 197) 50%, 
+      oklch(0.960 0.009 197) 80%, 
+      oklch(0.970 0.006 197) 100%);
+}
+
+.light .section-bg-muted {
+  background: 
+    linear-gradient(180deg, 
+      oklch(0.950 0.010 197) 0%, 
+      oklch(0.935 0.015 197) 20%, 
+      oklch(0.915 0.022 197) 50%, 
+      oklch(0.935 0.015 197) 80%, 
+      oklch(0.950 0.010 197) 100%);
+}
+
+.light .section-bg-accent {
+  background: transparent;
+}
+
+.light .section-bg-neutral {
+  background: 
+    linear-gradient(180deg, 
+      oklch(0.980 0.004 197) 0%, 
+      oklch(0.970 0.006 197) 30%, 
+      oklch(0.955 0.010 197) 50%, 
+      oklch(0.970 0.006 197) 70%, 
+      oklch(0.980 0.004 197) 100%);
+}
+
+/* Optimized background animations - contained within viewport */
+@keyframes float-contained {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.4;
+  }
+  33% {
+    transform: translateY(-10px) rotate(120deg);
+    opacity: 0.6;
+  }
+  66% {
+    transform: translateY(-5px) rotate(240deg);
+    opacity: 0.5;
+  }
+}
+
+@keyframes gradient-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.5;
+  }
+}
+
+@keyframes gentle-drift {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.2;
+  }
+  25% {
+    transform: translate(5px, -3px) scale(1.02);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate(-3px, 5px) scale(0.98);
+    opacity: 0.3;
+  }
+  75% {
+    transform: translate(-5px, -2px) scale(1.01);
+    opacity: 0.35;
+  }
+}
+
+/* Optimized animation classes - GPU accelerated and contained */
+.animate-float-contained {
+  animation: float-contained 6s ease-in-out infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  contain: layout;
+}
+
+.animate-gradient-pulse {
+  animation: gradient-pulse 8s ease-in-out infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  contain: layout;
+}
+
+.animate-gentle-drift {
+  animation: gentle-drift 10s ease-in-out infinite;
+  will-change: transform;
+  backface-visibility: hidden;
+  contain: layout;
+}
+
+.contain-paint {
+  contain: paint;
+}
+
+.contain-strict {
+  contain: strict;
+}
+
+/* Seamless section blending */
+section[class*="section-bg-"] {
+  position: relative;
+}
+
+section[class*="section-bg-"]:not(:first-of-type)::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(180deg, 
+    hsl(var(--background) / 0) 0%, 
+    hsl(var(--background) / 0.3) 25%,
+    hsl(var(--background) / 0.8) 50%,
+    hsl(var(--background) / 1) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+section[class*="section-bg-"]:not(:last-of-type)::after {
+  content: '';
+  position: absolute;
+  bottom: -50px;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(0deg, 
+    hsl(var(--background) / 0) 0%, 
+    hsl(var(--background) / 0.3) 25%,
+    hsl(var(--background) / 0.8) 50%,
+    hsl(var(--background) / 1) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
 :root {
   --background: oklch(0.9491 0.0085 197.0126);
   --foreground: oklch(0.3772 0.0619 212.6640);
@@ -159,3 +419,60 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Enhanced gradient animations for section separators */
+@keyframes gradient-x {
+  0%, 100% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes gradient-y {
+  0%, 100% {
+    transform: translateY(0%) scale(1);
+  }
+  50% {
+    transform: translateY(-5%) scale(1.02);
+  }
+}
+
+@keyframes gradient-xy {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translate(2%, -1%) rotate(1deg) scale(1.01);
+  }
+  50% {
+    transform: translate(-1%, 2%) rotate(-0.5deg) scale(1.02);
+  }
+  75% {
+    transform: translate(-2%, -1%) rotate(0.5deg) scale(1.01);
+  }
+}
+
+.animate-gradient-x {
+  animation: gradient-x 15s ease-in-out infinite;
+}
+
+.animate-gradient-y {
+  animation: gradient-y 12s ease-in-out infinite;
+}
+
+.animate-gradient-xy {
+  animation: gradient-xy 20s ease-in-out infinite;
+}
+
+/* Gradient Hero Styles */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+

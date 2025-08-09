@@ -32,7 +32,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                const theme = localStorage.getItem('bmweb-theme') || 'system';
+                const theme = localStorage.getItem('bmweb-theme') || 'dark';
                 const root = document.documentElement;
                 root.classList.remove('light', 'dark');
                 
@@ -45,14 +45,25 @@ export default function RootLayout({
               } catch (e) {
                 // Ignore localStorage errors
               }
+              
+              // Prevent hydration mismatch for body attributes
+              try {
+                const body = document.body;
+                if (body && !body.hasAttribute('suppressHydrationWarning')) {
+                  body.setAttribute('suppressHydrationWarning', 'true');
+                }
+              } catch (e) {
+                // Ignore body manipulation errors
+              }
             `,
           }}
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`}
+        suppressHydrationWarning={true}
       >
-        <ThemeProvider defaultTheme="system" storageKey="bmweb-theme">
+        <ThemeProvider defaultTheme="dark" storageKey="bmweb-theme">
           <LanguageProvider defaultLanguage="en">{children}</LanguageProvider>
         </ThemeProvider>
       </body>

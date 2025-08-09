@@ -110,8 +110,17 @@ export function AboutSection() {
   const content = about[language];
 
   return (
-    <section id="about" className="py-24">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section 
+      id="about" 
+      className="py-24 section-bg-secondary relative overflow-hidden"
+    >
+      {/* Optimized background decorations */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/5 left-1/6 w-56 h-56 bg-secondary/6 rounded-full blur-3xl animate-gentle-drift" />
+        <div className="absolute bottom-1/4 right-1/5 w-40 h-40 bg-primary/5 rounded-full blur-2xl animate-gradient-pulse" style={{ animationDelay: "3s" }} />
+      </div>
+      
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             {content.title}
@@ -154,6 +163,7 @@ export function AboutSection() {
             </Card>
           ))}
         </div>
+        
       </div>
     </section>
   );

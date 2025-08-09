@@ -110,8 +110,17 @@ export function FAQSection() {
   const content = faq[language];
 
   return (
-    <section id="faq" className="py-24">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section 
+      id="faq" 
+      className="py-24 section-bg-muted relative overflow-hidden"
+    >
+      {/* Optimized background decorations */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/3 right-1/4 w-44 h-44 bg-muted/25 rounded-full blur-3xl animate-float-contained" />
+        <div className="absolute bottom-1/5 left-1/5 w-36 h-36 bg-primary/12 rounded-full blur-2xl animate-gentle-drift" style={{ animationDelay: "1.5s" }} />
+      </div>
+      
+      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             {content.title}
@@ -133,6 +142,7 @@ export function FAQSection() {
             </AccordionItem>
           ))}
         </Accordion>
+        
       </div>
     </section>
   );
