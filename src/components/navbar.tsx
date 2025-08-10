@@ -119,8 +119,8 @@ export function Navbar(): JSX.Element {
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="flex justify-between items-center h-16 min-w-0">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0 min-w-0">
             <h1 className="text-xl font-bold text-primary truncate">BMWEB</h1>
@@ -148,7 +148,7 @@ export function Navbar(): JSX.Element {
           {/* Desktop Right side buttons */}
           <div className="hidden md:flex items-center space-x-4">
             {/* Language Switcher */}
-            <DropdownMenu>
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <Globe className="h-4 w-4" />
@@ -166,7 +166,7 @@ export function Navbar(): JSX.Element {
             </DropdownMenu>
 
             {/* Theme Toggle */}
-            <DropdownMenu>
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon">
                   <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />

@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect, useRef } from "react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import {
   Card,
   CardContent,
@@ -16,6 +19,11 @@ import {
   Smartphone,
   Globe,
 } from "lucide-react";
+
+// Register ScrollTrigger plugin
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 const services = {
   en: {
@@ -108,8 +116,84 @@ export function ServicesSection() {
   const { language } = useLanguage();
   const content = services[language];
 
+  const sectionRef = useRef<HTMLElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Title and subtitle animations with staggered entrance
+      const headerTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 80%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      if (titleRef.current && subtitleRef.current) {
+        // Set initial states with blur effect
+        gsap.set([titleRef.current, subtitleRef.current], {
+          opacity: 0,
+          y: 30,
+          filter: "blur(4px)",
+          force3D: true,
+        });
+
+        // Simple and reliable title and subtitle animations
+        headerTl
+          .to(titleRef.current, {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 0.8,
+            ease: "power2.out",
+            force3D: true,
+          })
+          .to(
+            subtitleRef.current,
+            {
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              duration: 0.6,
+              ease: "power2.out",
+              force3D: true,
+            },
+            "-=0.4"
+          );
+      }
+
+      // Section entrance effect - subtle positioning above previous section
+      if (sectionRef.current) {
+        gsap.fromTo(sectionRef.current,
+          {
+            opacity: 0.8,
+            transform: "translateY(20px) translateZ(0)",
+          },
+          {
+            opacity: 1,
+            transform: "translateY(0px) translateZ(0)",
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: "top 85%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        );
+      }
+      
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, [language]);
+
   return (
     <section 
+      ref={sectionRef}
       id="services" 
       className="py-24 section-bg-primary relative overflow-hidden"
     >
@@ -121,15 +205,24 @@ export function ServicesSection() {
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+          <h2 
+            ref={titleRef}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4"
+          >
             {content.title}
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p 
+            ref={subtitleRef}
+            className="text-xl text-muted-foreground max-w-3xl mx-auto"
+          >
             {content.subtitle}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div 
+          ref={cardsRef}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
           {content.items.map((service, index) => (
             <Card
               key={index}

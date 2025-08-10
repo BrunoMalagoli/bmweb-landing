@@ -1,43 +1,73 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/components/language-provider";
 import { useTheme } from "@/components/theme-provider";
-import { useEffect, useMemo, useRef, useCallback, memo } from "react";
+import { useEffect, useMemo, useRef, memo } from "react";
 import dynamic from "next/dynamic";
 import { gsap } from "gsap";
+import { Star, ArrowRight, Zap } from "lucide-react";
 
 import { hyperspeedPresets } from "@/components/Hyperspeed/HyperSpeedPresets";
 
 // Lazy load Hyperspeed for better initial load performance
 const Hyperspeed = dynamic(() => import("@/components/Hyperspeed/Hyperspeed"), {
-  loading: () => <div className="w-full h-full bg-gradient-to-br from-primary/5 to-secondary/5 animate-pulse" />
+  loading: function HyperspeedLoading() {
+    return (
+      <div className="w-full h-full bg-gradient-to-br from-primary/5 to-secondary/5 animate-pulse" />
+    );
+  },
 });
 
 const heroContent = {
   en: {
+    eyebrow: "🚀 Trusted by 500+ Growing Businesses",
+    eyebrowMobile: "🚀 500+ Growing Businesses",
     headline: "Your Business, Ready for Tomorrow — Today",
-    cta: "Start now",
+    description:
+      "We create complete digital ecosystems: websites that convert, systems that automate, AI that powers your business, and branding that differentiates.",
+    cta: "Request free consultation",
+    ctaSecondary: "View Case Studies",
+    socialProof: {
+      rating: "4.9/5",
+      reviews: "200+ reviews",
+      clients: "Join 500+ successful businesses",
+    },
   },
   es: {
+    eyebrow: "🚀 Confianza de 500+ Empresas en Crecimiento",
+    eyebrowMobile: "🚀 500+ Empresas Exitosas",
     headline: "Tu negocio listo para mañana — hoy",
-    cta: "Comenzar ahora",
+    description:
+      "Creamos ecosistemas digitales completos: webs que convierten, sistemas que automatizan, IA que potencia tu negocio, y branding que diferencia.",
+    cta: "Solicitar consultoría gratuita",
+    ctaSecondary: "Ver Casos de Éxito",
+    socialProof: {
+      rating: "4.9/5",
+      reviews: "200+ reseñas",
+      clients: "Únete a 500+ empresas exitosas",
+    },
   },
 };
 
-export const HeroSection = memo(() => {
+export const HeroSection = memo(function HeroSection() {
   const { language } = useLanguage();
   const { theme } = useTheme();
-  
+
   // Memoize content to prevent unnecessary re-renders
   const content = useMemo(() => heroContent[language], [language]);
-  
+
+  const eyebrowRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
-  const ctaRef = useRef<HTMLButtonElement>(null);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const trustRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const hyperspeedOptions = useMemo(() => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return {
         ...hyperspeedPresets.one,
         colors: hyperspeedPresets.one.colors,
@@ -79,81 +109,141 @@ export const HeroSection = memo(() => {
 
   useEffect(() => {
     // GSAP animations for hero content
-    if (headlineRef.current && ctaRef.current && containerRef.current) {
+    if (
+      eyebrowRef.current &&
+      headlineRef.current &&
+      descriptionRef.current &&
+      ctaRef.current &&
+      trustRef.current &&
+      containerRef.current
+    ) {
       const tl = gsap.timeline();
 
       // Split headline text into words for staggered animation
       const headline = headlineRef.current;
-      const words = headline.textContent?.split(' ') || [];
+      const words = headline.textContent?.split(" ") || [];
       headline.innerHTML = words
-        .map(word => `<span class="inline-block">${word}</span>`)
-        .join(' ');
+        .map((word) => `<span class="inline-block">${word}</span>`)
+        .join(" ");
 
       // Set initial states with GPU optimization
-      gsap.set(headline.children, {
-        opacity: 0,
-        x: -60,
-        filter: "blur(10px)",
-        force3D: true,
-        transformOrigin: "left center",
-      });
-
-      gsap.set(ctaRef.current, {
-        opacity: 0,
-        y: 20,
-        force3D: true,
-      });
-
-      // High-performance animation with GPU acceleration
-      tl.to(headline.children, {
-        opacity: 1,
-        x: 0,
-        filter: "blur(0px)",
-        duration: 0.6,
-        stagger: 0.05,
-        ease: "power2.out",
-        force3D: true,
-        immediateRender: false,
-      })
-      // Animate CTA button with hardware acceleration
-      .to(ctaRef.current, {
-        opacity: 1,
-        y: 0,
-        duration: 0.4,
-        ease: "power2.out",
-        force3D: true,
-        immediateRender: false,
-      }, "-=0.2");
-
-      // Optimized CTA hover animations with throttling
-      const ctaButton = ctaRef.current;
-      let hoverTween: gsap.core.Tween | null = null;
-      
-      const handleMouseEnter = () => {
-        if (hoverTween) hoverTween.kill();
-        hoverTween = gsap.to(ctaButton, {
-          y: -2,
-          boxShadow: "0 10px 25px rgba(0, 0, 0, 0.15)",
-          duration: 0.2,
-          ease: "power2.out",
+      gsap.set(
+        [
+          eyebrowRef.current,
+          headline.children,
+          descriptionRef.current,
+          ctaRef.current,
+          trustRef.current,
+        ],
+        {
+          opacity: 0,
+          y: 30,
+          filter: "blur(8px)",
           force3D: true,
-        });
-      };
+        }
+      );
 
-      const handleMouseLeave = () => {
-        if (hoverTween) hoverTween.kill();
-        hoverTween = gsap.to(ctaButton, {
+      // High-performance animation sequence
+      tl
+        // Eyebrow animation
+        .to(eyebrowRef.current, {
+          opacity: 1,
           y: 0,
-          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.1)",
-          duration: 0.2,
+          filter: "blur(0px)",
+          duration: 0.5,
           ease: "power2.out",
           force3D: true,
-        });
-      };
+        })
+        // Headline staggered animation
+        .to(
+          headline.children,
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 0.6,
+            stagger: 0.08,
+            ease: "power2.out",
+            force3D: true,
+          },
+          "-=0.3"
+        )
+        // Description animation
+        .to(
+          descriptionRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 0.5,
+            ease: "power2.out",
+            force3D: true,
+          },
+          "-=0.3"
+        )
+        // CTA buttons animation
+        .to(
+          ctaRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 0.5,
+            ease: "power2.out",
+            force3D: true,
+          },
+          "-=0.2"
+        )
+        // Trust elements animation
+        .to(
+          trustRef.current,
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 0.5,
+            ease: "power2.out",
+            force3D: true,
+          },
+          "-=0.3"
+        );
 
-      // Use passive event listeners for better performance
-      ctaButton.addEventListener('mouseenter', handleMouseEnter, { passive: true });
-      ctaButton.addEventListener('mouseleave', handleMouseLeave, { passive: true });
+      // Enhanced CTA hover animations
+      const primaryCTA = ctaRef.current?.querySelector("[data-primary-cta]");
+      if (primaryCTA) {
+        let hoverTween: gsap.core.Tween | null = null;
+
+        const handleMouseEnter = () => {
+          if (hoverTween) hoverTween.kill();
+          hoverTween = gsap.to(primaryCTA, {
+            scale: 1.05,
+            y: -3,
+            boxShadow: "0 15px 35px rgba(0, 0, 0, 0.2)",
+            duration: 0.3,
+            ease: "power2.out",
+            force3D: true,
+          });
+        };
+
+        const handleMouseLeave = () => {
+          if (hoverTween) hoverTween.kill();
+          hoverTween = gsap.to(primaryCTA, {
+            scale: 1,
+            y: 0,
+            boxShadow: "0 4px 15px rgba(0, 0, 0, 0.1)",
+            duration: 0.3,
+            ease: "power2.out",
+            force3D: true,
+          });
+        };
+
+        primaryCTA.addEventListener("mouseenter", handleMouseEnter, {
+          passive: true,
+        });
+        primaryCTA.addEventListener("mouseleave", handleMouseLeave, {
+          passive: true,
+        });
+      }
     }
 
     // Load Unicorn Studio script only on desktop
@@ -204,22 +294,88 @@ export const HeroSection = memo(() => {
       </div>
 
       {/* Content positioned at top left with proper spacing */}
-      <div ref={containerRef} className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32">
-        <div className="max-w-4xl">
-          <h1 
-            ref={headlineRef} 
+      <div
+        ref={containerRef}
+        className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32"
+      >
+        <div className="max-w-4xl space-y-8">
+          {/* Eyebrow - Trust Signal */}
+          <div ref={eyebrowRef} className="flex items-start gap-2">
+            <Badge
+              variant="secondary"
+              className="text-xs sm:text-sm font-medium bg-primary/10 text-primary border-primary/20 hover:bg-primary/15 transition-colors px-2 py-1 sm:px-3 sm:py-1.5 max-w-full whitespace-normal leading-tight"
+            >
+              <Zap className="w-3 h-3 mr-1 flex-shrink-0" />
+              <span className="break-words sm:hidden">
+                {content.eyebrowMobile}
+              </span>
+              <span className="break-words hidden sm:inline">
+                {content.eyebrow}
+              </span>
+            </Badge>
+          </div>
+
+          {/* Main Headline */}
+          <h1
+            ref={headlineRef}
             className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-foreground leading-tight tracking-tight"
           >
             {content.headline}
           </h1>
-          <div className="mt-8">
-            <Button 
-              ref={ctaRef}
-              size="lg" 
-              className="text-lg px-8 py-4 h-auto transition-transform duration-300"
+
+          {/* Description */}
+          <p
+            ref={descriptionRef}
+            className="text-lg sm:text-xl text-muted-foreground max-w-2xl leading-relaxed"
+          >
+            {content.description}
+          </p>
+
+          {/* CTA Buttons */}
+          <div ref={ctaRef} className="flex flex-col sm:flex-row gap-4">
+            <Button
+              data-primary-cta
+              size="lg"
+              className="text-lg px-8 py-4 h-auto bg-primary hover:bg-primary/90 shadow-lg group transition-all duration-300"
             >
-              {content.cta}
+              <span>{content.cta}</span>
+              <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
+            <Button
+              variant="outline"
+              size="lg"
+              className="text-lg px-8 py-4 h-auto hover:bg-muted/50 transition-colors"
+            >
+              {content.ctaSecondary}
+            </Button>
+          </div>
+
+          {/* Trust Elements */}
+          <div ref={trustRef} className="space-y-6">
+            {/* Social Proof Card */}
+            <Card className="w-full sm:w-fit bg-background/80 backdrop-blur-sm border-muted/50">
+              <CardContent className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 p-3 sm:p-4">
+                <div className="flex items-center gap-1 shrink-0">
+                  {[...Array(5)].map((_, i) => (
+                    <Star
+                      key={i}
+                      className="w-3 h-3 sm:w-4 sm:h-4 fill-yellow-400 text-yellow-400"
+                    />
+                  ))}
+                  <span className="ml-2 font-semibold text-xs sm:text-sm">
+                    {content.socialProof.rating}
+                  </span>
+                </div>
+                <div className="hidden sm:block h-4 w-px bg-border" />
+                <span className="text-xs sm:text-sm text-muted-foreground">
+                  {content.socialProof.reviews}
+                </span>
+                <div className="hidden sm:block h-4 w-px bg-border" />
+                <span className="text-xs sm:text-sm font-medium leading-tight">
+                  {content.socialProof.clients}
+                </span>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
